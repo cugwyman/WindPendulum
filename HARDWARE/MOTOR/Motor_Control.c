@@ -14,8 +14,8 @@ M2TypeDef M2;
 
 float set_x = 0.0;                   //X轴设置点(M1)
 float set_y = 0.0;                   //Y轴设置点(M2)
-float R = 35.0; 					 //半径设置(cm)
-float Angle = 40.0;					 //摆动角度设置(°)
+float R = 25.0; 					 //半径设置(cm)
+float Angle = 30.0;					 //摆动角度设置(°)
 uint8_t RoundDir = 0; 				 //正反转控制
 ///*------------------------------------------
 // 函数功能:控制器软件复位
@@ -68,7 +68,7 @@ void Mode_0(void)
 ------------------------------------------*/
 void Mode_1(void)
 {  
-	const float priod = 1500.0;  //单摆周期(毫秒)
+	const float priod = 1602.0;  //单摆周期(毫秒)
 	static uint32_t MoveTimeCnt = 0;
 	float A = 0.0;
 	float Normalization = 0.0;
@@ -76,18 +76,18 @@ void Mode_1(void)
 	MoveTimeCnt += 5;							 //每5ms运算1次
 	Normalization = (float)MoveTimeCnt / priod;	 //对单摆周期归一化
 	Omega = 2.0*3.14159*Normalization;			 //对2π进行归一化处理
-	A = atan((R/82.0f))*57.2958f;				 //根据摆幅求出角度A,82为摆杆距离地面长度cm
+	A = atan(((R+5)/82.0f))*57.2958f;				 //根据摆幅求出角度A,82为摆杆距离地面长度cm
 	set_y = A*sin(Omega); 
 	
-	PID_M1_SetPoint(0);			//X方向PID定位目标值0
-	PID_M1_SetKp(24);	
+	PID_M1_SetPoint(0);	//X方向PID跟踪目标值sin
+	PID_M1_SetKp(80);	
 	PID_M1_SetKi(0);	 
-	PID_M1_SetKd(3000);
+	PID_M1_SetKd(2500);	
     
-	PID_M2_SetPoint(set_y);		//Y方向PID跟踪目标值sin
-	PID_M2_SetKp(24);    //60
-	PID_M2_SetKi(0);		//0.79
-	PID_M2_SetKd(3000); 	 //800
+	PID_M2_SetPoint(set_y);		//Y方向PID定位目标值0
+	PID_M2_SetKp(80);    
+	PID_M2_SetKi(0);		
+	PID_M2_SetKd(1500);
     
 	M1.PWM = PID_M1_PosLocCalc(M1.CurPos);	//Pitch
 	M2.PWM = PID_M2_PosLocCalc(M2.CurPos);
@@ -95,7 +95,7 @@ void Mode_1(void)
 	if(M1.PWM > POWER_MAX)  M1.PWM =  POWER_MAX;
 	if(M1.PWM < -POWER_MAX) M1.PWM = -POWER_MAX;	
 	
-	if(M2.PWM > POWER_MAX)  M2.PWM = POWER_MAX;
+	if(M2.PWM > POWER_MAX)  M2.PWM =  POWER_MAX;
 	if(M2.PWM < -POWER_MAX) M2.PWM = -POWER_MAX;		
     MotorMove(M1.PWM,M2.PWM);
 }
@@ -105,7 +105,7 @@ void Mode_1(void)
 ------------------------------------------*/
 void Mode_2(void)
 {
-	const float priod = 1500.0;  //单摆周期(毫秒)
+	const float priod = 1602.0;  //单摆周期(毫秒)
 	static uint32_t MoveTimeCnt = 0;
 	float A = 0.0;
 	float Normalization = 0.0;
@@ -113,18 +113,18 @@ void Mode_2(void)
 	MoveTimeCnt += 5;							 //每5ms运算1次
 	Normalization = (float)MoveTimeCnt / priod;	 //对单摆周期归一化
 	Omega = 2.0*3.14159*Normalization;			 //对2π进行归一化处理
-	A = atan((R/88.0f))*57.2958f;//根据摆幅求出角度A,88为摆杆离地高度
+	A = atan(((R+5)/82.0f))*57.2958f;//根据摆幅求出角度A,82为摆杆离地高度
 	set_x = A*sin(Omega);                        //计算出当前摆角 		
 	
 	PID_M1_SetPoint(set_x);	//X方向PID跟踪目标值sin
-	PID_M1_SetKp(24);	
-	PID_M1_SetKi(0.1);	 
-	PID_M1_SetKd(3000);	
+	PID_M1_SetKp(80);	
+	PID_M1_SetKi(0);	 
+	PID_M1_SetKd(2500);	
     
 	PID_M2_SetPoint(0);		//Y方向PID定位目标值0
-	PID_M2_SetKp(24);    
-	PID_M2_SetKi(0.1);		
-	PID_M2_SetKd(3000); 	 	
+	PID_M2_SetKp(80);    
+	PID_M2_SetKi(0);		
+	PID_M2_SetKd(2500); 	 	
     
 	M1.PWM = PID_M1_PosLocCalc(M1.CurPos);	//X方向PID计算
 	M2.PWM = PID_M2_PosLocCalc(M2.CurPos);  //Y方向PID计算	
@@ -143,7 +143,7 @@ void Mode_2(void)
 ------------------------------------------*/ 
 void Mode_3(void)
 {
-	const float priod = 1500.0;  //单摆周期(毫秒)
+	const float priod = 1602.0;  //单摆周期(毫秒)
 	             //相位补偿 0, 10   20   30   40   50   60   70   80   90   100  110  120  130  140  150  160  170 180
 	const float Phase[19]= {0,-0.1,-0.05,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.05,0.05,0.05,0.07,0};
 	static uint32_t MoveTimeCnt = 0;
@@ -157,21 +157,21 @@ void Mode_3(void)
 	MoveTimeCnt += 5;							 //每5ms运算1次
 	Normalization = (float)MoveTimeCnt / priod;	 //对单摆周期归一化
 	Omega = 2.0*3.14159*Normalization;			 //对2π进行归一化处理
-	A = atan((R/88.0f))*57.2958f;//根据摆幅求出角度A,88为摆杆离地高度                   						
+	A = atan(((R+5)/82.0f))*57.2958f;//根据摆幅求出角度A,82为摆杆离地高度                   						
 	Ax = A*cos(Angle*0.017453);	 //计算出X方向摆幅分量0.017453为弧度转换
 	Ay = A*sin(Angle*0.017453);	 //计算出Y方向摆幅分量
 	set_x = Ax*sin(Omega); 		 //计算出X方向当前摆角
 	set_y = Ay*sin(Omega+Phase[pOffset]); //计算出Y方向当前摆角
 		
 	PID_M1_SetPoint(set_x);	//X方向PID跟踪目标值sin
-	PID_M1_SetKp(24);	
-	PID_M1_SetKi(0.1);	 
-	PID_M1_SetKd(3000);
-
-	PID_M2_SetPoint(set_y);	//Y方向PID跟踪目标值sin
-	PID_M2_SetKp(24);    
-	PID_M2_SetKi(0.1);		
-	PID_M2_SetKd(3000); 	 
+	PID_M1_SetKp(80);	
+	PID_M1_SetKi(0);	 
+	PID_M1_SetKd(2500);	
+    
+	PID_M2_SetPoint(0);		//Y方向PID定位目标值0
+	PID_M2_SetKp(80);    
+	PID_M2_SetKi(0);		
+	PID_M2_SetKd(2500); 	 
 	
 	M1.PWM = PID_M1_PosLocCalc(M1.CurPos);	//Pitch
 	M2.PWM = PID_M2_PosLocCalc(M2.CurPos);  //Roll
@@ -198,7 +198,7 @@ void Mode_4(void)
 		PID_M1_SetKd(4000);
 
 		PID_M2_SetPoint(0);	  //Y方向PID定位目标值0
-		PID_M2_SetKp(20);  		
+		PID_M2_SetKp(25);  		
 		PID_M2_SetKi(0);    
 		PID_M2_SetKd(4000);
 			
@@ -225,9 +225,9 @@ void Mode_4(void)
 ------------------------------------------*/
 void Mode_5(void)
 {
-	const float priod = 1410.0;  //单摆周期(毫秒)
+	const float priod = 1602.0;  //单摆周期(毫秒)
 	static uint32_t MoveTimeCnt = 0;
-	float A = 0.0;
+	float Ax = 0.0,Ay=0.0;
 	float phase = 0.0;
 	float Normalization = 0.0;
 	float Omega = 0.0;
@@ -235,25 +235,26 @@ void Mode_5(void)
 	MoveTimeCnt += 5;							 //每5ms运算1次
 	Normalization = (float)MoveTimeCnt / priod;	 //对单摆周期归一化
 	Omega = 2.0*3.14159*Normalization;			 //对2π进行归一化处理				
-	A = atan((R/88.0f))*57.2958f;    //根据半径求出对应的振幅A
+	Ax = atan(((R+5)/82.0f))*57.2958f;    //根据半径求出对应的振幅A
+	Ay= atan(((R+5)/82.0f))*57.2958f;
 	
 	if(RoundDir == 0)       	  
 		phase = 3.141592/2.0;		 //逆时针旋转相位差90° 
 	else if(RoundDir == 1)  
 		phase = (3.0*3.141592)/2.0;	 //顺时针旋转相位差270°
 	
-	set_x = A*sin(Omega);			 //计算出X方向当前摆角
-	set_y = A*sin(Omega+phase); 	 //计算出Y方向当前摆角
+	set_x = Ax*sin(Omega);			 //计算出X方向当前摆角
+	set_y = Ay*sin(Omega+phase); 	 //计算出Y方向当前摆角
 	 
 	PID_M1_SetPoint(set_x);	//X方向PID跟踪目标值sin
-	PID_M1_SetKp(20);	
-	PID_M1_SetKi(0.1);	 
-	PID_M1_SetKd(3000);
+	PID_M1_SetKp(80);	//24
+	PID_M1_SetKi(0);	 //0.1
+	PID_M1_SetKd(2500);//3000
 
-	PID_M2_SetPoint(set_y);	//Y方向PID跟踪目标值cos
-	PID_M2_SetKp(20);    
-	PID_M2_SetKi(0.1);		
-	PID_M2_SetKd(3000); 		 
+	PID_M2_SetPoint(set_y);	//Y方向PID跟踪目标值sin
+	PID_M2_SetKp(50);    
+	PID_M2_SetKi(0);		
+	PID_M2_SetKd(1500); 		 
 	
 	M1.PWM = PID_M1_PosLocCalc(M1.CurPos); //Pitch
 	M2.PWM = PID_M2_PosLocCalc(M2.CurPos); //Roll
@@ -283,24 +284,24 @@ void MotorMove(int32_t pwm1,int32_t pwm2)
 {
 	if(pwm1 >= 0)
 	{
-	 	PWM_M2_Forward(pwm1);
-		PWM_M4_Backward(pwm1);
+		PWM_M3_Backward(pwm1+20);	
+		PWM_M2_Forward(0);
 	}
 	else if(pwm1 < 0)
 	{
-	 	PWM_M2_Backward(abs(pwm1));
-		PWM_M4_Forward(abs(pwm1));	
+	 	PWM_M3_Forward(abs(0));
+		PWM_M2_Backward(abs(pwm1+20));
 	}
 
 	if(pwm2 >= 0)
 	{
-	 	PWM_M1_Forward(pwm2);
-		PWM_M3_Backward(pwm2);
+		PWM_M1_Forward(0);
+	 	PWM_M4_Backward(pwm2-30);
 	}
 	else if(pwm2 < 0)
-	{
-	 	PWM_M1_Backward(abs(pwm2));
-		PWM_M3_Forward(abs(pwm2));	
+	{	
+		PWM_M1_Backward(abs(pwm2+30));
+	 	PWM_M4_Forward(abs(0));
 	} 	
 }
 

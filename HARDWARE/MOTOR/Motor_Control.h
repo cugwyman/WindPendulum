@@ -11,7 +11,7 @@
 
 #define STROKE_MAX   	 (80000)   //软件极限行程<0-80000>
 #define SPEED_MAX	 	 (300)	   //软件极限速度<0-300>
-#define POWER_MAX	 	 (5000)	   //软件极限功率<0-3000>
+#define POWER_MAX	 	 (6000)	   //软件极限功率<0-3000>
 
 #define TIMEOUT_CNT  	 (5000)	   //归零超时计数器ms<0-10000>
 #define ZERO_POINT	 	 (10000)   //设置参考零点为<0-80000>

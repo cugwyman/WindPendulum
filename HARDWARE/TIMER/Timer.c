@@ -47,36 +47,21 @@ void TIM5_Config(unsigned short int Period,unsigned short int Prescaler)
  函数说明:每5ms进入一次中断,采样率200Hz
  实测运行时间: 3.93ms
 -----------------------------------------------*/
-#define H (0.88f)  //万向节距地面的高度(米)
+#define H (0.82f)  //万向节距地面的高度(米)
 void TIM5_IRQHandler(void)
 {  	
-//	uint8_t i = 0;
 	float pitch_temp1 = 0.0;
 	float roll_temp1 = 0.0;
-//	static float pitch_sum = 0.0;
-//	static float roll_sum = 0.0;
 	GPIOE->BSRR = GPIO_Pin_3;
 	if(TIM_GetITStatus(TIM5,TIM_IT_Update) == SET)
 	{			
-//		for(i=0;i<3;i++)
-//		{
-//			pitch_temp1 =angle[0];
-//			roll_temp1  =angle[1];
-//			pitch_sum += pitch_temp1;
-//			roll_sum  += roll_temp1;
-//		}
-//		pitch_temp1 = pitch_sum / 3.0;	 //取出平均值
-//		roll_temp1  = roll_sum  / 3.0;	 //取出平均值
-//		pitch_sum = 0.0;
-//		roll_sum = 0.0;
-		
 		pitch_temp1 =angle[0];
 		roll_temp1  =angle[1];
 		
         M1.CurPos = pitch_temp1 - pitch_zero;       
         M2.CurPos = roll_temp1 - roll_zero; 	
 		//计算速度
-		M1.CurSpeed = M1.CurPos - M1.PrevPos;
+		M1.CurSpeed = M1.CurPos - M1.PrevPos+0.04;
 		M1.PrevPos = M1.CurPos;				
 		
 		M2.CurSpeed = M2.CurPos - M2.PrevPos;

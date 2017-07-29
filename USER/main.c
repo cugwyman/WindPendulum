@@ -8,9 +8,9 @@
 
 /**********************************************
  *
- *          Wind pendulum 风力摆
- *               2017.7.28
- *     CUG     Wyman    名字你们自己加
+ *       Wind pendulum 风力摆 V2.0
+ *               2017.7.29
+ *     CUG     Wyman    Chen    Sun 
  *          
  *     IDE              Keil MDK V5.23
  *     MCU              STM32F103ZET6
@@ -36,6 +36,12 @@
  *  5.Motor_Control.c处所有模式的set_x及set_y使用统一的全局变量，方便示波器调用
  *  6.Motor_Control.h处的限幅只使用了POWER_MAX，大小可修改
  *
+ *  2017.7.29   V2.0
+ *  
+ *  1.修改电机工作方式，每个方向有单独PWM控制，已经修正死区电压
+ *  2.重新测量摆动周期，设置摆长、半径等
+ *  3.修改PID参数，控制较好，所有功能已在允许误差范围内
+ *
  **********************************************/
  
 int main()
@@ -51,7 +57,7 @@ int main()
     
     CurMode = 5;//风力摆控制模式选择
     
-	TIM5_Config(5000-1,71);// TIM5 5ms Inturrupt 采样率200Hz
+	TIM5_Config(5000-1,72-1);// TIM5 5ms Inturrupt 采样率200Hz
 	while(1)
 	{
 		OutPut_Data(M2.CurPos, set_y, M1.CurPos, set_x);// Y轴检测，Y轴设定，X轴检测，X轴设定

@@ -111,10 +111,10 @@ int32_t PID_M1_PosLocCalc(float NextPoint)
 
 	iError = M1PID.SetPoint - NextPoint;        // 偏差
 	M1PID.SumError += iError;				    // 积分
-	if(M1PID.SumError > 1000.0)					//积分限幅2300
-		M1PID.SumError = 1000;
-	else if(M1PID.SumError < -1000.0)
-		M1PID.SumError = -1000;	
+	if(M1PID.SumError > 2300.0)					//积分限幅2300
+		M1PID.SumError = 2300;
+	else if(M1PID.SumError < -2300.0)
+		M1PID.SumError = -2300;	
 	dError = iError - M1PID.LastError; 			// 当前微分
 	M1PID.LastError = iError;
 	
@@ -133,10 +133,10 @@ int32_t PID_M2_PosLocCalc(float NextPoint)
 
 	iError = M2PID.SetPoint - NextPoint;        // 偏差
 	M2PID.SumError += iError;
-	if(M2PID.SumError > 1000.0)					//积分限幅
-		M2PID.SumError = 1000;
-	else if(M2PID.SumError < -1000.0)
-		M2PID.SumError = -1000;
+	if(M2PID.SumError > 2300.0)					//积分限幅
+		M2PID.SumError = 2300;
+	else if(M2PID.SumError < -2300.0)
+		M2PID.SumError = -2300;
 	dError = iError - M2PID.LastError; 			// 当前微分
 	M2PID.LastError = iError;
 	
