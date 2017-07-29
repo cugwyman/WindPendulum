@@ -586,6 +586,16 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>DOCUMENTS</GroupName>
+          <Files>
+            <File>
+              <FileName>ReadMe.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ReadMe.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
